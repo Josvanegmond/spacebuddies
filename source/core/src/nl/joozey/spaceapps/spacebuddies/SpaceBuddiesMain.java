@@ -32,7 +32,13 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         float accelY = Gdx.input.getAccelerometerY();
         float accelZ = Gdx.input.getAccelerometerZ();
 
-        System.out.println(TAG + " Accel X:" + accelX + " Y:" + accelY + " Z:" + accelZ);
+        float R = (float)Math.sqrt((accelX*accelX) + (accelY*accelY) + (accelZ*accelZ));
+
+        float angleX = accelX/R;
+        float angleY = accelY/R;
+        float angleZ = accelZ/R;
+
+        System.out.println(TAG + " Angle X:" + angleX + " Y:" + angleY + " Z:" + angleZ);
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
