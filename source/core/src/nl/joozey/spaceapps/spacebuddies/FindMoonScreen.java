@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
@@ -22,6 +21,7 @@ public class FindMoonScreen implements Screen {
     private static final String TAG = FindMoonScreen.class.getName();
 
     private Texture img;
+    private Texture moonImage;
     private BitmapFont font;
 
     private Vector2 moonVector;
@@ -50,8 +50,10 @@ public class FindMoonScreen implements Screen {
         longitude = 4.3263;
         compassAvail = Gdx.input.isPeripheralAvailable(Input.Peripheral.Compass);
 
-        img = new Texture("space.png");
+        img = new Texture("starfield.jpg");
         img.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+        moonImage = new Texture("moon.png");
 
         boolean available = Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
         System.out.println(TAG + " Accelerometer? " + available);
@@ -128,18 +130,11 @@ public class FindMoonScreen implements Screen {
         font.draw(batch, "Y:" + angleY, 600, 60);
         font.draw(batch, "Z:" + angleZ, 1180, 60);
 
-        batch.end();
-
-        batch.begin();
-
-        int moonX = (int) (((moonVector.x + 270f) / 360f)%360f * img.getWidth());
-        int moonY = (int) (((moonVector.y + 270f) / 180f)%360f * img.getHeight());
-
-        shapeRenderer.begin();
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.circle(moonX - smoothTranslateX, moonY - smoothTranslateY, 16 * Gdx.graphics.getDensity());
-        shapeRenderer.end();
+        if (moonVector != null) {
+            int moonX = (int) (((moonVector.x + 270f) / 360f) % 360f * img.getWidth());
+            int moonY = (int) (((moonVector.y + 270f) / 180f) % 360f * img.getHeight());
+            batch.draw(moonImage, moonX - smoothTranslateX, moonY - smoothTranslateY);
+        }
 
         batch.end();
     }
