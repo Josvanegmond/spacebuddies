@@ -38,6 +38,10 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         float angleY = (float)Math.acos((double)accelY/R);
         float angleZ = (float)Math.acos((double)accelZ/R);
 
+        angleX = (float)Math.toDegrees((double) angleX);
+        angleY = (float)Math.toDegrees((double) angleY);
+        angleZ = (float)Math.toDegrees((double) angleZ);
+
         System.out.println(TAG + " Angle X:" + angleX + " Y:" + angleY + " Z:" + angleZ);
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
