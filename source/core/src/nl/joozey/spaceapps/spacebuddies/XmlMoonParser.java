@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by mint on 23-4-16.
@@ -18,8 +19,13 @@ public class XmlMoonParser {
 
         try {
             URL url = new URL("http://api.wolframalpha.com/v2/query?appid=2Q6RQG-58PVTW6AH6&input=position%20of%20moon%20in%20sky%20from%2052.213952°N%2C%204.3263°E&format=plaintext&podstate=SkyMap:PlanetaryMoonData__Show+decimal");
+
+            URLConnection urlConn = url.openConnection();
+            urlConn.setConnectTimeout(5000);
+            urlConn.setReadTimeout(5000);
+
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
+                    new InputStreamReader(urlConn.getInputStream()));
 
             String xml = "";
             String inputLine;
@@ -44,9 +50,7 @@ public class XmlMoonParser {
             return moonVector;
 
         } catch (IOException e) {
-            System.out.println(e.getMessage());
         } catch (NullPointerException e) {
-            System.out.println(e.getMessage());
         }
 
         return null;
