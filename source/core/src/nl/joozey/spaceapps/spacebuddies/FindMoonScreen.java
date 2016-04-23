@@ -2,7 +2,6 @@ package nl.joozey.spaceapps.spacebuddies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -93,8 +92,8 @@ public class FindMoonScreen implements Screen {
 
         float translateWidth = img.getWidth();
         float translateHeight = img.getHeight();
-        int translateX = (int) ((azimuth + 180f) * translateWidth / 360f);
-        int translateY = (int) (((angleX * ((angleZ < 90f) ? -1f : 1f)) + 90f) * translateHeight / 180f);
+        int translateX = (int) (azimuth * translateWidth / 360f);
+        int translateY = (int) ((angleX * ((angleZ < 90f) ? -1f : 1f)) * translateHeight / 90f);
 
         translateQueue.add(new Vector2(translateX, translateY));
         if (translateQueue.size() > 10) {
@@ -141,7 +140,8 @@ public class FindMoonScreen implements Screen {
         if (moonVector != null) {
             int moonX = (int) (((moonVector.x + 270f) / 360f) % 360f * img.getWidth());
             int moonY = (int) (((moonVector.y + 270f) / 180f) % 360f * img.getHeight());
-            batch.draw(moonImage, moonX - smoothTranslateX, moonY - smoothTranslateY);
+            batch.draw(moonImage, moonX - smoothTranslateX, moonY - smoothTranslateY,
+                    16 * Gdx.graphics.getDensity(), 16 * Gdx.graphics.getDensity());
         }
 
         batch.end();
