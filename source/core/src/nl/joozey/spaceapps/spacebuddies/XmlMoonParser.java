@@ -28,19 +28,14 @@ public class XmlMoonParser {
             }
             in.close();
 
+            Vector2 moonVector = new Vector2();
+
             XmlReader.Element xmlElement = xmlReader.parse(xml);
             Array<XmlReader.Element> children = xmlElement.getChildrenByNameRecursively("plaintext");
-            String moonData = children.get(1).getText();
-            moonData = moonData.replace("right ascension | ", "");
-            moonData = moonData.replace("^hdeclination |", "");
-            moonData = moonData.replace("°", "");
-
-            String[] moonDataSplit = moonData.split(" ");
-            Vector2 moonVector = new Vector2(
-                    Float.parseFloat(moonDataSplit[0]),
-                    Float.parseFloat(moonDataSplit[1])
-            );
-
+            String moonData = children.get(3).getText();
+            moonVector.x = Float.parseFloat(moonData.substring(moonData.indexOf(" | ") + 3, moonData.indexOf("°")));
+            moonData = moonData.substring(moonData.indexOf("azimuth | ") + 10);
+            moonVector.y = Float.parseFloat(moonData.substring(0, moonData.indexOf("°")));
             return moonVector;
 
         } catch (IOException e) {
