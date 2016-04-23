@@ -17,7 +17,7 @@ public class XmlMoonParser {
         XmlReader xmlReader = new XmlReader();
 
         try {
-            URL oracle = new URL("http://api.wolframalpha.com/v2/query?appid=2Q6RQG-58PVTW6AH6&input=position%20of%20moon%20in%20sky%20from%2052.213952°N%2C%204.3263°E&format=plaintext&podstate=Location:PlanetaryMoonData__Show+decimal");
+            URL oracle = new URL("http://api.wolframalpha.com/v2/query?appid=2Q6RQG-58PVTW6AH6&input=position%20of%20moon%20in%20sky%20from%2052.213952°N%2C%204.3263°E&format=plaintext&podstate=SkyMap:PlanetaryMoonData__Show+decimal");
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(oracle.openStream()));
 
