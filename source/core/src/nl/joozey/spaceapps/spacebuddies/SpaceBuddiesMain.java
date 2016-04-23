@@ -34,9 +34,9 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
 
         float R = (float)Math.sqrt((accelX*accelX) + (accelY*accelY) + (accelZ*accelZ));
 
-        float angleX = accelX/R;
-        float angleY = accelY/R;
-        float angleZ = accelZ/R;
+        float angleX = (float)Math.acos((double)accelX/R);
+        float angleY = (float)Math.acos((double)accelY/R);
+        float angleZ = (float)Math.acos((double)accelZ/R);
 
         System.out.println(TAG + " Angle X:" + angleX + " Y:" + angleY + " Z:" + angleZ);
 
