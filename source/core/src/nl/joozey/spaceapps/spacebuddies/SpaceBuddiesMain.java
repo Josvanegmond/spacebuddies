@@ -1,6 +1,7 @@
 package nl.joozey.spaceapps.spacebuddies;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class SpaceBuddiesMain extends ApplicationAdapter {
@@ -13,12 +14,12 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-
         showScreen(Constants.FIND_MOON_SCREEN);
     }
 
     public void showScreen(Screen screen) {
-        screen.create(batch);
+        Gdx.input.setInputProcessor(screen);
+        screen.create(this);
         _currentScreen = screen;
     }
 
