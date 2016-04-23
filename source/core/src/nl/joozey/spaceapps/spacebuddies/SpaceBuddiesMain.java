@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import sun.rmi.runtime.Log;
-
 public class SpaceBuddiesMain extends ApplicationAdapter {
 
     private static final String TAG = SpaceBuddiesMain.class.getName();
@@ -22,10 +20,22 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
 
     private Vector2 moonVector;
 
+    private boolean compassAvail;
+    private double latitude;
+    private double longitude;
+
+    private float azimuth;
+    private float pitch;
+    private float roll;
+
     @Override
     public void create() {
         font = new BitmapFont();
         font.getData().setScale(3);
+
+        latitude = 52.213952;
+        longitude = 4.3263;
+        compassAvail = Gdx.input.isPeripheralAvailable(Input.Peripheral.Compass);
 
         batch = new SpriteBatch();
         img = new Texture("space.png");
@@ -35,7 +45,7 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         System.out.println(TAG + " Accelerometer? " + available);
 
         moonVector = XmlMoonParser.getMoonData();
-        if(moonVector != null) {
+        if (moonVector != null) {
             System.out.println(TAG + " MoonVector x:" + moonVector.x + " y:" + moonVector.y);
         } else {
             System.out.println(TAG + "MoonVector Null");
@@ -48,15 +58,19 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         float accelY = Gdx.input.getAccelerometerY();
         float accelZ = Gdx.input.getAccelerometerZ();
 
-        float R = (float)Math.sqrt((accelX*accelX) + (accelY*accelY) + (accelZ*accelZ));
+        float R = (float) Math.sqrt((accelX * accelX) + (accelY * accelY) + (accelZ * accelZ));
 
-        float angleX = (float)Math.acos((double)accelX/R);
-        float angleY = (float)Math.acos((double)accelY/R);
-        float angleZ = (float)Math.acos((double)accelZ/R);
+        float angleX = (float) Math.acos((double) accelX / R);
+        float angleY = (float) Math.acos((double) accelY / R);
+        float angleZ = (float) Math.acos((double) accelZ / R);
 
-        angleX = (float)Math.toDegrees((double) angleX);
-        angleY = (float)Math.toDegrees((double) angleY);
-        angleZ = (float)Math.toDegrees((double) angleZ);
+        angleX = (float) Math.toDegrees((double) angleX);
+        angleY = (float) Math.toDegrees((double) angleY);
+        angleZ = (float) Math.toDegrees((double) angleZ);
+
+        azimuth = Gdx.input.getAzimuth();
+        pitch = Gdx.input.getPitch();
+        roll = Gdx.input.getRoll();
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -65,17 +79,18 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         batch.draw(img, 0, 0);
 
         font.setColor(Color.WHITE);
-        font.draw(batch, " Angle X:" + angleX + " Y:" + angleY + " Z:" + angleZ, 20, 60);
 
-        double latitude = 52.213952;
-        double longitude = 4.3263;
-        boolean compassAvail = Gdx.input.isPeripheralAvailable(Peripheral.Compass);
-        float azimuth = Gdx.input.getAzimuth();
-        float pitch = Gdx.input.getPitch();
-        float roll = Gdx.input.getRoll();
+        font.draw(batch, "Angle X:" + angleX, 20, 60);
+        font.draw(batch, "Y:" + angleY, 600, 60);
+        font.draw(batch, "Z:" + angleZ, 1180, 60);
 
-        if(moonVector != null) {
-            font.draw(batch, " Moon Elevation:" + moonVector.x + " Azimuth:" + moonVector.y, 20, 110);
+        font.draw(batch, "Azimuth X:" + azimuth, 20, 110);
+        font.draw(batch, "Y:" + pitch, 600, 110);
+        font.draw(batch, "Z:" + roll, 1180, 110);
+
+        if (moonVector != null) {
+            font.draw(batch, " Moon Elevation:" + moonVector.x, 20, 160);
+            font.draw(batch, "Azimuth:" + moonVector.y, 600, 160);
         }
 
         batch.end();
