@@ -107,6 +107,9 @@ public class FindMoonScreen implements Screen {
         smoothTranslateX /= translateQueue.size();
         smoothTranslateY /= translateQueue.size();
 
+        smoothTranslateX *= 5;
+        smoothTranslateY *= 5;
+
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
