@@ -10,6 +10,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 public class SpaceBuddiesMain extends ApplicationAdapter {
 
     private static final String TAG = SpaceBuddiesMain.class.getName();
@@ -27,6 +31,8 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
     private float azimuth;
     private float pitch;
     private float roll;
+
+    private Queue<Vector2> translateQueue = new LinkedList<Vector2>();
 
     @Override
     public void create() {
@@ -76,22 +82,44 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
 
-        batch.draw(img, 0, 0);
+        float translateWidth = Gdx.graphics.getWidth() / img.getWidth();
+        float translateHeight = Gdx.graphics.getHeight() / img.getHeight();
+        int translateX = (int)((azimuth + 180f) * translateWidth / 360f);
+        int translateY = (int)(((angleX * ((angleZ < 90f) ? -1f : 1f)) + 90f) * translateHeight / 180f);
+
+        translateQueue.add(new Vector2(translateX, translateY));
+        if(translateQueue.size() > 10) {
+            translateQueue.poll();
+        }
+        int smoothTranslateX = 0;
+        int smoothTranslateY = 0;
+        for(Vector2 v : translateQueue) {
+            smoothTranslateX += v.x;
+            smoothTranslateY += v.y;
+        }
+
+        smoothTranslateX /= translateQueue.size();
+        smoothTranslateY /= translateQueue.size();
+
+        batch.draw(img, 0, 0, smoothTranslateX, smoothTranslateY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         font.setColor(Color.WHITE);
 
-        font.draw(batch, "Angle X:" + angleX, 20, 60);
-        font.draw(batch, "Y:" + angleY, 600, 60);
-        font.draw(batch, "Z:" + angleZ, 1180, 60);
+        font.draw(batch, "Translate X:" + translateX, 20, 210);
+        font.draw(batch, "Y:" + translateY, 600, 210);
+
+        if (moonVector != null) {
+            font.draw(batch, "Moon Azimuth:" + moonVector.x, 20, 160);
+            font.draw(batch, "Elevation:" + moonVector.y, 600, 160);
+        }
 
         font.draw(batch, "Azimuth X:" + azimuth, 20, 110);
         font.draw(batch, "Y:" + pitch, 600, 110);
         font.draw(batch, "Z:" + roll, 1180, 110);
 
-        if (moonVector != null) {
-            font.draw(batch, " Moon Elevation:" + moonVector.x, 20, 160);
-            font.draw(batch, "Azimuth:" + moonVector.y, 600, 160);
-        }
+        font.draw(batch, "Angle X:" + angleX, 20, 60);
+        font.draw(batch, "Y:" + angleY, 600, 60);
+        font.draw(batch, "Z:" + angleZ, 1180, 60);
 
         batch.end();
 
