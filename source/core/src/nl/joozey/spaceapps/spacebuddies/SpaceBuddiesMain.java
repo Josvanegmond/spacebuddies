@@ -82,8 +82,8 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
 
-        float translateWidth = Gdx.graphics.getWidth() / img.getWidth();
-        float translateHeight = Gdx.graphics.getHeight() / img.getHeight();
+        float translateWidth = img.getWidth();
+        float translateHeight = img.getHeight();
         int translateX = (int)((azimuth + 180f) * translateWidth / 360f);
         int translateY = (int)(((angleX * ((angleZ < 90f) ? -1f : 1f)) + 90f) * translateHeight / 180f);
 
@@ -93,15 +93,17 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         }
         int smoothTranslateX = 0;
         int smoothTranslateY = 0;
+        float signX = Math.signum(translateX);
+        float signY = Math.signum(translateY);
         for(Vector2 v : translateQueue) {
-            smoothTranslateX += v.x;
-            smoothTranslateY += v.y;
+            smoothTranslateX += Math.abs(v.x) * signX;
+            smoothTranslateY += Math.abs(v.y) * signY;
         }
 
         smoothTranslateX /= translateQueue.size();
         smoothTranslateY /= translateQueue.size();
 
-        batch.draw(img, 0, 0, smoothTranslateX, smoothTranslateY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(img, 0, 0, smoothTranslateX, -smoothTranslateY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         font.setColor(Color.WHITE);
 
