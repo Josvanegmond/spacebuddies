@@ -2,12 +2,12 @@ package nl.joozey.spaceapps.spacebuddies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
@@ -22,6 +22,7 @@ public class FindMoonScreen implements Screen {
     private static final String TAG = FindMoonScreen.class.getName();
 
     private Texture img;
+    private Texture moonImage;
     private BitmapFont font;
 
     private Vector2 moonVector;
@@ -38,10 +39,14 @@ public class FindMoonScreen implements Screen {
 
     private Queue<Vector2> translateQueue = new LinkedList<Vector2>();
 
+    private SpaceBuddiesMain main;
+
     @Override
-    public void create(Batch batch) {
+    public void create(SpaceBuddiesMain main) {
         font = new BitmapFont();
         font.getData().setScale(3);
+
+        this.main = main;
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setAutoShapeType(true);
@@ -50,8 +55,10 @@ public class FindMoonScreen implements Screen {
         longitude = 4.3263;
         compassAvail = Gdx.input.isPeripheralAvailable(Input.Peripheral.Compass);
 
-        img = new Texture("space.png");
+        img = new Texture("starfield.jpg");
         img.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+        moonImage = new Texture("moon.png");
 
         boolean available = Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
         System.out.println(TAG + " Accelerometer? " + available);
@@ -105,6 +112,9 @@ public class FindMoonScreen implements Screen {
         smoothTranslateX /= translateQueue.size();
         smoothTranslateY /= translateQueue.size();
 
+        smoothTranslateX *= 5;
+        smoothTranslateY *= 5;
+
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -128,19 +138,53 @@ public class FindMoonScreen implements Screen {
         font.draw(batch, "Y:" + angleY, 600, 60);
         font.draw(batch, "Z:" + angleZ, 1180, 60);
 
-        batch.end();
-
-        batch.begin();
-
-        int moonX = (int) (((moonVector.x + 270f) / 360f)%360f * img.getWidth());
-        int moonY = (int) (((moonVector.y + 270f) / 180f)%360f * img.getHeight());
-
-        shapeRenderer.begin();
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.circle(moonX - smoothTranslateX, moonY - smoothTranslateY, 16 * Gdx.graphics.getDensity());
-        shapeRenderer.end();
+        if (moonVector != null) {
+            int moonX = (int) (((moonVector.x + 270f) / 360f) % 360f * img.getWidth());
+            int moonY = (int) (((moonVector.y + 270f) / 180f) % 360f * img.getHeight());
+            batch.draw(moonImage, moonX - smoothTranslateX, moonY - smoothTranslateY);
+        }
 
         batch.end();
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        main.showScreen(Constants.GOTO_MOON_SCREEN);
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }

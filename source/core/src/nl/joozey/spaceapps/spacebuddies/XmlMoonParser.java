@@ -17,9 +17,9 @@ public class XmlMoonParser {
         XmlReader xmlReader = new XmlReader();
 
         try {
-            URL oracle = new URL("http://api.wolframalpha.com/v2/query?appid=2Q6RQG-58PVTW6AH6&input=position%20of%20moon%20in%20sky%20from%2052.213952°N%2C%204.3263°E&format=plaintext&podstate=SkyMap:PlanetaryMoonData__Show+decimal");
+            URL url = new URL("http://api.wolframalpha.com/v2/query?appid=2Q6RQG-58PVTW6AH6&input=position%20of%20moon%20in%20sky%20from%2052.213952°N%2C%204.3263°E&format=plaintext&podstate=SkyMap:PlanetaryMoonData__Show+decimal");
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(oracle.openStream()));
+                    new InputStreamReader(url.openStream()));
 
             String xml = "";
             String inputLine;
@@ -32,6 +32,11 @@ public class XmlMoonParser {
 
             XmlReader.Element xmlElement = xmlReader.parse(xml);
             Array<XmlReader.Element> children = xmlElement.getChildrenByNameRecursively("plaintext");
+
+            if (children.size < 4) {
+                return null;
+            }
+
             String moonData = children.get(3).getText();
             moonVector.x = Float.parseFloat(moonData.substring(moonData.indexOf(" | ") + 3, moonData.indexOf("°")));
             moonData = moonData.substring(moonData.indexOf("azimuth | ") + 10);
@@ -39,6 +44,8 @@ public class XmlMoonParser {
             return moonVector;
 
         } catch (IOException e) {
+            System.out.println(e.getMessage());
+        } catch (NullPointerException e) {
             System.out.println(e.getMessage());
         }
 
