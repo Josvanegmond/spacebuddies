@@ -67,6 +67,13 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         font.setColor(Color.WHITE);
         font.draw(batch, " Angle X:" + angleX + " Y:" + angleY + " Z:" + angleZ, 20, 60);
 
+        double latitude = 52.213952;
+        double longitude = 4.3263;
+        boolean compassAvail = Gdx.input.isPeripheralAvailable(Peripheral.Compass);
+        float azimuth = Gdx.input.getAzimuth();
+        float pitch = Gdx.input.getPitch();
+        float roll = Gdx.input.getRoll();
+
         if(moonVector != null) {
             font.draw(batch, " Moon Elevation:" + moonVector.x + " Azimuth:" + moonVector.y, 20, 110);
         }
