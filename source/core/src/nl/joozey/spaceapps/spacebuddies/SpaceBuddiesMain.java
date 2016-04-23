@@ -8,11 +8,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Stack;
 
 public class SpaceBuddiesMain extends ApplicationAdapter {
 
@@ -32,12 +32,17 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
     private float pitch;
     private float roll;
 
+    private ShapeRenderer shapeRenderer;
+
     private Queue<Vector2> translateQueue = new LinkedList<Vector2>();
 
     @Override
     public void create() {
         font = new BitmapFont();
         font.getData().setScale(3);
+
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setAutoShapeType(true);
 
         latitude = 52.213952;
         longitude = 4.3263;
@@ -78,24 +83,20 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         pitch = Gdx.input.getPitch();
         roll = Gdx.input.getRoll();
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-
         float translateWidth = img.getWidth();
         float translateHeight = img.getHeight();
-        int translateX = (int)((azimuth + 180f) * translateWidth / 360f);
-        int translateY = (int)(((angleX * ((angleZ < 90f) ? -1f : 1f)) + 90f) * translateHeight / 180f);
+        int translateX = (int) ((azimuth + 180f) * translateWidth / 360f);
+        int translateY = (int) (((angleX * ((angleZ < 90f) ? -1f : 1f)) + 90f) * translateHeight / 180f);
 
         translateQueue.add(new Vector2(translateX, translateY));
-        if(translateQueue.size() > 10) {
+        if (translateQueue.size() > 10) {
             translateQueue.poll();
         }
         int smoothTranslateX = 0;
         int smoothTranslateY = 0;
         float signX = Math.signum(translateX);
         float signY = Math.signum(translateY);
-        for(Vector2 v : translateQueue) {
+        for (Vector2 v : translateQueue) {
             smoothTranslateX += Math.abs(v.x) * signX;
             smoothTranslateY += Math.abs(v.y) * signY;
         }
@@ -103,10 +104,26 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         smoothTranslateX /= translateQueue.size();
         smoothTranslateY /= translateQueue.size();
 
+        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+
+        int moonX = (int) ((moonVector.x + 180f) / 360f * img.getWidth());
+        int moonY = (int) ((moonVector.y + 90f) / 180f * img.getHeight());
+
+        shapeRenderer.begin();
+        shapeRenderer.setColor(Color.WHITE);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.circle(smoothTranslateX - moonX, smoothTranslateY - moonY, 64);
+        shapeRenderer.end();
+
+        batch.end();
+
+        batch.begin();
         batch.draw(img, 0, 0, smoothTranslateX, -smoothTranslateY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         font.setColor(Color.WHITE);
-
         font.draw(batch, "Translate X:" + translateX, 20, 210);
         font.draw(batch, "Y:" + translateY, 600, 210);
 
@@ -124,7 +141,5 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
         font.draw(batch, "Z:" + angleZ, 1180, 60);
 
         batch.end();
-
-
     }
 }
