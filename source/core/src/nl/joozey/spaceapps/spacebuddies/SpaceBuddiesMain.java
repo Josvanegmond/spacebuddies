@@ -14,7 +14,7 @@ public class SpaceBuddiesMain extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        showScreen(Constants.FIND_MOON_SCREEN);
+        showScreen(Constants.GOTO_MOON_SCREEN);
     }
 
     public void showScreen(Screen screen) {
